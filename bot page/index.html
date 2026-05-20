@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<html lang="pl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Staty PoE</title>
+    <title>PoE Stats</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <header>
     <h1>POE HIDEOUT</h1>
-    <p>Kliknij gracza, by sprawdzić jego hajs</p>
+    <p>Click a player to check their wealth</p>
     
     <button class="gamble-btn" onclick="openHarvestModal()">Card Gamble Simulator</button>
 </header>
@@ -25,12 +25,12 @@
                 <h2 id="modal-username">Nick</h2>
             </div>
             <div class="stats-container">
-                <div class="stat-box lost"><h3>🔴 Przegrane</h3><p id="modal-lost"></p></div>
-                <div class="stat-box win"><h3>🟢 Wygrane</h3><p id="modal-win"></p></div>
+                <div class="stat-box lost"><h3>🔴 Losses</h3><p id="modal-lost"></p></div>
+                <div class="stat-box win"><h3>🟢 Wins</h3><p id="modal-win"></p></div>
             </div>
             <hr>
             <div class="balance-container">
-                <h3>📊 Ogólny bilans:</h3>
+                <h3>📊 Overall balance:</h3>
                 <p id="modal-balance" class="balance"></p>
             </div>
         </div>
@@ -40,15 +40,15 @@
     <div class="modal-content">
         <span class="close-btn" onclick="closeHarvestModal()">&times;</span>
         <h2>🧪 Harvest Gambling</h2>
-        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">Ryzyko: 50% na podwojenie, 50% na utratę wszystkiego.</p>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">Risk: 50% chance to double, 50% chance to lose everything.</p>
         
         <div style="margin-top: 20px;">
-            <label>Liczba kart do wrzucenia:</label>
-            <input type="number" id="h-cards" placeholder="np. 5" style="width: 100%; padding: 10px; margin: 10px 0; background: #1a1a1d; border: 1px solid #444; color: white; border-radius: 5px;">
+            <label>Number of cards to throw in:</label>
+            <input type="number" id="h-cards" placeholder="e.g. 5" style="width: 100%; padding: 10px; margin: 10px 0; background: #1a1a1d; border: 1px solid #444; color: white; border-radius: 5px;">
             
             <button onclick="gambleHarvestCards()" class="harvest-play-btn">
-    <i class="fa-solid fa-dice"></i> GRAJ!
-    </button>
+                <i class="fa-solid fa-dice"></i> PLAY!
+            </button>
             
             <div id="h-result" style="margin-top: 20px; text-align: center; font-size: 1.2rem; font-weight: bold; min-height: 1.5em;"></div>
         </div>
@@ -56,7 +56,6 @@
 </div>
 
   <script>
-        
         function openHarvestModal() {
             document.getElementById('harvest-modal').classList.remove('hidden');
         }
@@ -66,34 +65,29 @@
         }
 
         function gambleHarvestCards() {
-    const input = document.getElementById('h-cards');
-    const resultEl = document.getElementById('h-result');
-    const cardCount = parseInt(input.value);
+            const input = document.getElementById('h-cards');
+            const resultEl = document.getElementById('h-result');
+            const cardCount = parseInt(input.value);
 
-    if (isNaN(cardCount) || cardCount <= 0) {
-        alert("Wpisz poprawną liczbę kart!");
-        return;
-    }
+            if (isNaN(cardCount) || cardCount <= 0) {
+                alert("Enter a valid number of cards!");
+                return;
+            }
 
-    
-    const rand = Math.random();
+            const rand = Math.random();
 
-    if (rand < 0.33) {
-        // WYGRANA
-        resultEl.style.color = '#00ff87'; // Zielony
-        resultEl.innerHTML = `WYGRANA! 🎉<br>Masz teraz ${cardCount * 2} kart!`;
-    } else if (rand < 0.66) {
-        // PRZEGRANA
-        resultEl.style.color = '#ff4f4f'; // Czerwony
-        resultEl.innerHTML = `PORAŻKA 💀<br>Straciłeś ${cardCount} kart.`;
-    } else {
-        // NEUTRALNY
-        resultEl.style.color = '#ffe600'; // Żółty
-        resultEl.innerHTML = `NIC SIĘ NIE STAŁO 😐<br>Stos kart bez zmian (${cardCount}).`;
-    }
-}
+            if (rand < 0.33) {
+                resultEl.style.color = '#00ff87';
+                resultEl.innerHTML = `WIN! 🎉<br>You now have ${cardCount * 2} cards!`;
+            } else if (rand < 0.66) {
+                resultEl.style.color = '#ff4f4f';
+                resultEl.innerHTML = `LOSS 💀<br>You lost ${cardCount} cards.`;
+            } else {
+                resultEl.style.color = '#ffe600';
+                resultEl.innerHTML = `NOTHING HAPPENED 😐<br>Card stack unchanged (${cardCount}).`;
+            }
+        }
 
-     
         const DEFAULT_AVATAR = "https://cdn.discordapp.com/embed/avatars/0.png";
 
         async function loadData() {
@@ -111,14 +105,14 @@
                     card.addEventListener('click', () => showModal(username, stats, avatarUrl));
                     grid.appendChild(card);
                 }
-            } catch (error) { console.error("Błąd ładowania danych: ", error); }
+            } catch (error) { console.error("Error loading data: ", error); }
         }
 
         function formatCurrency(mirrors, divines) {
             let parts = [];
-            if (mirrors > 0) parts.push(`${mirrors} Mirrorów`);
-            if (divines > 0) parts.push(`${divines} Divine'ów`);
-            return parts.length === 0 ? "Brak" : parts.join(' i ');
+            if (mirrors > 0) parts.push(`${mirrors} Mirrors`);
+            if (divines > 0) parts.push(`${divines} Divines`);
+            return parts.length === 0 ? "None" : parts.join(' and ');
         }
 
         function showModal(username, stats, avatarUrl) {
@@ -133,11 +127,11 @@
             document.getElementById('modal-lost').textContent = formatCurrency(lostMirrors, lostDivs);
             document.getElementById('modal-win').textContent = formatCurrency(winMirrors, winDivs);
             
-            let balanceText = (balMirrors !== 0 ? (balMirrors > 0 ? "+" : "") + balMirrors + " Mirrorów " : "") + 
-                              (balDivs !== 0 ? (balDivs > 0 ? "+" : "") + balDivs + " Divine'ów" : "");
+            let balanceText = (balMirrors !== 0 ? (balMirrors > 0 ? "+" : "") + balMirrors + " Mirrors " : "") + 
+                              (balDivs !== 0 ? (balDivs > 0 ? "+" : "") + balDivs + " Divines" : "");
             
             const balEl = document.getElementById('modal-balance');
-            balEl.textContent = balanceText || "0 Divine'ów";
+            balEl.textContent = balanceText || "0 Divines";
             balEl.style.color = (balMirrors > 0 || (balMirrors === 0 && balDivs > 0)) ? "#00ff87" : (balMirrors < 0 || (balMirrors === 0 && balDivs < 0)) ? "#ff4f4f" : "#ffe600";
             document.getElementById('stats-modal').classList.remove('hidden');
         }
