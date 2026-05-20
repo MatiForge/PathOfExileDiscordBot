@@ -1,0 +1,300 @@
+:root {
+    
+    --bg-color: #05070a;
+    --card-bg: #11141a;
+    --hover-bg: #1a1e26;
+    
+   
+    --text-color: #d8e2ed;
+    --text-muted: #8090a8;
+    
+    
+    --accent: #ffb700;
+    --poe-blue: #00d2ff;
+    --poe-red: #ff3333;
+    
+  
+    --red: #ff4f4f;
+    --green: #00ff87;
+    
+  
+    --glow-blue: 0 0 15px rgba(0, 210, 255, 0.5);
+    --glow-red: 0 0 15px rgba(255, 51, 51, 0.5);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-color); 
+    background-image: linear-gradient(to bottom, rgba(5, 7, 10, 0.8), rgba(5, 7, 10, 0.95)), url('tloxd.jpg') !important;
+    background-size: cover;
+    background-position: center top;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    color: var(--text-color);
+    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-align: center;
+    -webkit-font-smoothing: antialiased;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+header {
+    margin-top: 60px;
+    margin-bottom: 60px;
+    padding: 20px;
+    background: rgba(17, 20, 26, 0.8);
+    border-radius: 12px;
+    border-bottom: 2px solid var(--poe-blue);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+h1 {
+    color: var(--accent);
+    margin: 0;
+    font-size: 3.5rem;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8), 0 0 15px rgba(255, 183, 0, 0.3);
+}
+
+p {
+    color: var(--text-muted);
+    font-size: 1.2rem;
+    margin-top: 10px;
+}
+
+.grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 25px;
+    justify-content: center;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.player-card {
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    padding: 25px;
+    width: 170px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(128, 144, 168, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.player-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: var(--poe-blue);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.player-card:hover {
+    transform: translateY(-8px);
+    background-color: var(--hover-bg);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8), var(--glow-blue);
+}
+
+.player-card:hover::after {
+    transform: scaleX(1);
+}
+
+.player-card img {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid var(--accent);
+    margin-bottom: 15px;
+    box-shadow: 0 0 15px rgba(255, 183, 0, 0.3);
+}
+
+.player-card h3 {
+    margin: 0;
+    font-size: 1.3rem;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.modal {
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(5, 7, 10, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(8px);
+    transition: opacity 0.2s ease;
+    opacity: 1;
+}
+
+.modal.hidden {
+    opacity: 0;
+    pointer-events: none; 
+}
+
+.modal-content {
+    background-color: var(--card-bg);
+    padding: 40px;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 500px;
+    position: relative;
+    border: 2px solid var(--poe-red);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.9), var(--glow-red);
+    text-align: left;
+    transition: transform 0.2s ease-out, opacity 0.2s ease-out;
+}
+
+.modal.hidden .modal-content {
+    transform: scale(0.9);
+    opacity: 0;
+}
+
+.close-btn {
+    position: absolute;
+    top: 15px;
+    right: 25px;
+    color: var(--text-muted);
+    font-size: 32px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.close-btn:hover {
+    color: var(--poe-red);
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(128, 144, 168, 0.2);
+}
+
+.modal-header img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 3px solid var(--accent);
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 2.2rem;
+    color: white;
+    text-transform: uppercase;
+}
+
+.stats-container {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.stat-box {
+    flex: 1;
+    background-color: rgba(5, 7, 10, 0.5);
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid rgba(128, 144, 168, 0.1);
+}
+
+.stat-box.lost h3 { color: var(--red); }
+.stat-box.win h3 { color: var(--green); }
+
+.balance {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: white;
+}
+
+
+#harvest-modal button {
+    display: block;      
+    width: 100%;
+    padding: 15px;
+    margin-top: 15px;
+    background-color: var(--poe-red); 
+    border: 2px solid #ff5555;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    text-transform: uppercase;
+    border-radius: 5px;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+}
+
+#harvest-modal button:hover {
+    background-color: #ff5555;
+    box-shadow: 0 0 15px var(--poe-red);
+    transform: translateY(-2px);
+}
+
+.gamble-btn {
+    padding: 15px 40px;
+    margin-top: 20px;
+    font-size: 1.5rem;
+    text-transform: uppercase;
+    font-weight: bold;
+    color: var(--accent);
+    background: rgba(0, 0, 0, 0.3);
+    border: 2px solid var(--accent);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    letter-spacing: 2px;
+}
+
+.gamble-btn:hover {
+    background: var(--accent);
+    color: #000;
+    box-shadow: 0 0 20px var(--accent);
+    transform: translateY(-2px);
+}
+
+.harvest-play-btn {
+    background-color: var(--poe-red) !important;
+    color: white !important;
+    padding: 12px 24px;
+    border: 2px solid #ff5555;
+    border-radius: 5px;
+    font-weight: bold;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.harvest-play-btn:hover {
+    background-color: #ff5555 !important;
+    box-shadow: 0 0 15px var(--poe-red);
+    transform: translateY(-2px);
+}

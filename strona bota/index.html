@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staty PoE</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+    <h1>POE HIDEOUT</h1>
+    <p>Kliknij gracza, by sprawdzić jego hajs</p>
+    
+    <button class="gamble-btn" onclick="openHarvestModal()">Card Gamble Simulator</button>
+</header>
+    <main>
+        <div id="players-grid" class="grid"></div>
+    </main>
+
+    <div id="stats-modal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <div class="modal-header">
+                <img id="modal-avatar" src="" alt="Avatar">
+                <h2 id="modal-username">Nick</h2>
+            </div>
+            <div class="stats-container">
+                <div class="stat-box lost"><h3>🔴 Przegrane</h3><p id="modal-lost"></p></div>
+                <div class="stat-box win"><h3>🟢 Wygrane</h3><p id="modal-win"></p></div>
+            </div>
+            <hr>
+            <div class="balance-container">
+                <h3>📊 Ogólny bilans:</h3>
+                <p id="modal-balance" class="balance"></p>
+            </div>
+        </div>
+    </div>
+
+<div id="harvest-modal" class="modal hidden">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeHarvestModal()">&times;</span>
+        <h2>🧪 Harvest Gambling</h2>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">Ryzyko: 50% na podwojenie, 50% na utratę wszystkiego.</p>
+        
+        <div style="margin-top: 20px;">
+            <label>Liczba kart do wrzucenia:</label>
+            <input type="number" id="h-cards" placeholder="np. 5" style="width: 100%; padding: 10px; margin: 10px 0; background: #1a1a1d; border: 1px solid #444; color: white; border-radius: 5px;">
+            
+            <button onclick="gambleHarvestCards()" class="harvest-play-btn">
+    <i class="fa-solid fa-dice"></i> GRAJ!
+    </button>
+            
+            <div id="h-result" style="margin-top: 20px; text-align: center; font-size: 1.2rem; font-weight: bold; min-height: 1.5em;"></div>
+        </div>
+    </div>
+</div>
+
+  <script>
+        
+        function openHarvestModal() {
+            document.getElementById('harvest-modal').classList.remove('hidden');
+        }
+
+        function closeHarvestModal() {
+            document.getElementById('harvest-modal').classList.add('hidden');
+        }
+
+        function gambleHarvestCards() {
+    const input = document.getElementById('h-cards');
+    const resultEl = document.getElementById('h-result');
+    const cardCount = parseInt(input.value);
+
+    if (isNaN(cardCount) || cardCount <= 0) {
+        alert("Wpisz poprawną liczbę kart!");
+        return;
+    }
+
+    
+    const rand = Math.random();
+
+    if (rand < 0.33) {
+        // WYGRANA
+        resultEl.style.color = '#00ff87'; // Zielony
+        resultEl.innerHTML = `WYGRANA! 🎉<br>Masz teraz ${cardCount * 2} kart!`;
+    } else if (rand < 0.66) {
+        // PRZEGRANA
+        resultEl.style.color = '#ff4f4f'; // Czerwony
+        resultEl.innerHTML = `PORAŻKA 💀<br>Straciłeś ${cardCount} kart.`;
+    } else {
+        // NEUTRALNY
+        resultEl.style.color = '#ffe600'; // Żółty
+        resultEl.innerHTML = `NIC SIĘ NIE STAŁO 😐<br>Stos kart bez zmian (${cardCount}).`;
+    }
+}
+
+     
+        const DEFAULT_AVATAR = "https://cdn.discordapp.com/embed/avatars/0.png";
+
+        async function loadData() {
+            try {
+                const response = await fetch('/data.json?t=' + new Date().getTime());
+                const data = await response.json();
+                const grid = document.getElementById('players-grid');
+                grid.innerHTML = '';
+                for (const [username, stats] of Object.entries(data)) {
+                    if (!stats.divines && !stats.mirrors && !stats.win_divines && !stats.win_mirrors) continue;
+                    const card = document.createElement('div');
+                    card.className = 'player-card';
+                    const avatarUrl = stats.avatar_url || DEFAULT_AVATAR;
+                    card.innerHTML = `<img src="${avatarUrl}" alt="${username}"><h3>${username}</h3>`;
+                    card.addEventListener('click', () => showModal(username, stats, avatarUrl));
+                    grid.appendChild(card);
+                }
+            } catch (error) { console.error("Błąd ładowania danych: ", error); }
+        }
+
+        function formatCurrency(mirrors, divines) {
+            let parts = [];
+            if (mirrors > 0) parts.push(`${mirrors} Mirrorów`);
+            if (divines > 0) parts.push(`${divines} Divine'ów`);
+            return parts.length === 0 ? "Brak" : parts.join(' i ');
+        }
+
+        function showModal(username, stats, avatarUrl) {
+            const lostDivs = stats.divines || 0;
+            const lostMirrors = stats.mirrors || 0;
+            const winDivs = stats.win_divines || 0;
+            const winMirrors = stats.win_mirrors || 0;
+            const balDivs = winDivs - lostDivs;
+            const balMirrors = winMirrors - lostMirrors;
+            document.getElementById('modal-avatar').src = avatarUrl;
+            document.getElementById('modal-username').textContent = username;
+            document.getElementById('modal-lost').textContent = formatCurrency(lostMirrors, lostDivs);
+            document.getElementById('modal-win').textContent = formatCurrency(winMirrors, winDivs);
+            
+            let balanceText = (balMirrors !== 0 ? (balMirrors > 0 ? "+" : "") + balMirrors + " Mirrorów " : "") + 
+                              (balDivs !== 0 ? (balDivs > 0 ? "+" : "") + balDivs + " Divine'ów" : "");
+            
+            const balEl = document.getElementById('modal-balance');
+            balEl.textContent = balanceText || "0 Divine'ów";
+            balEl.style.color = (balMirrors > 0 || (balMirrors === 0 && balDivs > 0)) ? "#00ff87" : (balMirrors < 0 || (balMirrors === 0 && balDivs < 0)) ? "#ff4f4f" : "#ffe600";
+            document.getElementById('stats-modal').classList.remove('hidden');
+        }
+
+        function closeModal() { document.getElementById('stats-modal').classList.add('hidden'); }
+        
+        window.onclick = function(event) {
+            const m1 = document.getElementById('stats-modal');
+            const m2 = document.getElementById('harvest-modal');
+            if (event.target === m1) closeModal();
+            if (event.target === m2) closeHarvestModal();
+        }
+        
+        loadData();
+        setInterval(loadData, 5000);
+    </script>
+</body>
+</html>
